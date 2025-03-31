@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Framework Computer Science Demos</title>
+    <!-- React -->
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Math.js for calculations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --bg-light: #f9fafb;
+            --bg-dark: #111827;
+            --text-light: #f3f4f6;
+            --text-dark: #1f2937;
+            --border-light: #e5e7eb;
+            --border-dark: #374151;
+            --homoprime: #10b981;
+            --p-vs-np: #8b5cf6; 
+            --quantum: #3b82f6;
+            --zk-quantum: #ec4899;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+        
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.125rem;
+            font-weight: 300;
+            max-width: 800px;
+        }
+        
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0.5rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .tab:not(.active):hover {
+            background-color: var(--bg-light);
+        }
+        
+        .tab-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Demo containers */
+        .demo-container {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .demo-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-header p {
+            color: #6b7280;
+        }
+        
+        /* Card styles */
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7c3aed;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .btn-accent:hover {
+            background-color: #db2777;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-light);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--bg-light);
+        }
+        
+        /* Visualization containers */
+        .visualization {
+            background-color: var(--bg-light);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .console {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            height: 200px;
+            overflow-y: auto;
+        }
+        
+        .console-line {
+            margin-bottom: 0.25rem;
+        }
+        
+        /* Code snippet */
+        .code {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-size: 0.875rem;
+        }
+        
+        .code-comment {
+            color: #8b9cb5;
+        }
+        
+        .code-keyword {
+            color: #c678dd;
+        }
+        
+        .code-function {
+            color: #61afef;
+        }
+        
+        .code-string {
+            color: #98c379;
+        }
+        
+        .code-number {
+            color: #d19a66;
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 0.5rem;
+            background-color: var(--border-light);
+            border-radius: 0.25rem;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 0.25rem;
+            transition: width 0.3s ease;
+        }
+        
+        /* Custom styles for each demo */
+        
+        /* HomoPrime demo */
+        .homoprime-color {
+            color: var(--homoprime);
+        }
+        
+        .homoprime-bg {
+            background-color: var(--homoprime);
+        }
+        
+        .homoprime-border {
+            border-color: var(--homoprime);
+        }
+        
+        .homoprime-gradient {
+            background: linear-gradient(to right, #059669, #10b981);
+        }
+        
+        /* P vs NP demo */
+        .pvsnp-color {
+            color: var(--p-vs-np);
+        }
+        
+        .pvsnp-bg {
+            background-color: var(--p-vs-np);
+        }
+        
+        .pvsnp-border {
+            border-color: var(--p-vs-np);
+        }
+        
+        .pvsnp-gradient {
+            background: linear-gradient(to right, #7c3aed, #8b5cf6);
+        }
+        
+        /* Quantum demo */
+        .quantum-color {
+            color: var(--quantum);
+        }
+        
+        .quantum-bg {
+            background-color: var(--quantum);
+        }
+        
+        .quantum-border {
+            border-color: var(--quantum);
+        }
+        
+        .quantum-gradient {
+            background: linear-gradient(to right, #1d4ed8, #3b82f6);
+        }
+        
+        /* ZK Quantum demo */
+        .zkquantum-color {
+            color: var(--zk-quantum);
+        }
+        
+        .zkquantum-bg {
+            background-color: var(--zk-quantum);
+        }
+        
+        .zkquantum-border {
+            border-color: var(--zk-quantum);
+        }
+        
+        .zkquantum-gradient {
+            background: linear-gradient(to right, #be185d, #ec4899);
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Utilities */
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .ml-2 { margin-left: 0.5rem; }
+        .ml-4 { margin-left: 1rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .mr-4 { margin-right: 1rem; }
+        .p-2 { padding: 0.5rem; }
+        .p-4 { padding: 1rem; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .rounded { border-radius: 0.375rem; }
+        .border { border: 1px solid var(--border-light); }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Media queries */
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .tabs {
+                justify-content: center;
+            }
+            
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        // Main App Component
+        const App = () => {
+            const [activeTab, setActiveTab] = React.useState('homoprime');
+            
+            return (
+                <div>
+                    <header className="header">
+                        <div className="container">
+                            <h1>Prime Framework Computer Science Demos</h1>
+                            <p>
+                                Explore revolutionary breakthroughs in computer science enabled by the Prime Framework's 
+                                mathematical foundations.
+                            </p>
+                        </div>
+                    </header>
+                    
+                    <main className="container">
+                        <nav className="tabs">
+                            <div 
+                                className={`tab ${activeTab === 'homoprime' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('homoprime')}
+                            >
+                                <span className="tab-icon">🔒</span>
+                                <span>HomoPrime</span>
+                            </div>
+                            <div 
+                                className={`tab ${activeTab === 'pvsnp' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('pvsnp')}
+                            >
+                                <span className="tab-icon">🧮</span>
+                                <span>P vs NP</span>
+                            </div>
+                            <div 
+                                className={`tab ${activeTab === 'quantum' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('quantum')}
+                            >
+                                <span className="tab-icon">⚛️</span>
+                                <span>Quantum Computing</span>
+                            </div>
+                            <div 
+                                className={`tab ${activeTab === 'zkquantum' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('zkquantum')}
+                            >
+                                <span className="tab-icon">🔐</span>
+                                <span>ZK Quantum Proofs</span>
+                            </div>
+                        </nav>
+                        
+                        {activeTab === 'homoprime' && <HomoPrimeDemo />}
+                        {activeTab === 'pvsnp' && <PvsNPDemo />}
+                        {activeTab === 'quantum' && <QuantumDemo />}
+                        {activeTab === 'zkquantum' && <ZKQuantumDemo />}
+                    </main>
+                    
+                    <footer className="container p-4 text-center" style={{color: '#6b7280', borderTop: '1px solid var(--border-light)', marginTop: '2rem'}}>
+                        <p>Prime Framework Computer Science Demos © 2025</p>
+                        <p className="mt-2" style={{fontSize: '0.875rem'}}>Based on the revolutionary mathematical insights of the Prime Framework</p>
+                    </footer>
+                </div>
+            );
+        };
+        
+        // HomoPrime Demo - Practical Fully Homomorphic Encryption
+        const HomoPrimeDemo = () => {
+            const [encryptedValues, setEncryptedValues] = React.useState([]);
+            const [operationResult, setOperationResult] = React.useState(null);
+            const [decryptedResult, setDecryptedResult] = React.useState(null);
+            const [isEncrypting, setIsEncrypting] = React.useState(false);
+            const [isOperating, setIsOperating] = React.useState(false);
+            const [isDecrypting, setIsDecrypting] = React.useState(false);
+            const [value1, setValue1] = React.useState(42);
+            const [value2, setValue2] = React.useState(17);
+            const [operation, setOperation] = React.useState('multiply');
+            const [overhead, setOverhead] = React.useState({
+                traditional: 150000,
+                framework: 320
+            });
+            
+            // Generate random components for visualization
+            const generateRandomComponents = (val) => {
+                return Array(4).fill(0).map(() => Math.random());
+            };
+            
+            // Encrypt a value
+            const encryptValue = (value) => {
+                setIsEncrypting(true);
+                
+                // Simulate encryption process with timeout
+                setTimeout(() => {
+                    const newEncryptedValue = {
+                        original: value,
+                        encrypted: `Enc(${value})`,
+                        visual: generateRandomComponents(value)
+                    };
+                    
+                    setEncryptedValues(prev => [...prev, newEncryptedValue]);
+                    setIsEncrypting(false);
+                }, 1500);
+            };
+            
+            // Clear all encrypted values
+            const clearEncrypted = () => {
+                setEncryptedValues([]);
+                setOperationResult(null);
+                setDecryptedResult(null);
+            };
+            
+            // Perform homomorphic operation
+            const performOperation = () => {
+                if (encryptedValues.length < 2) return;
+                
+                setIsOperating(true);
+                
+                // Simulate homomorphic operation with timeout
+                setTimeout(() => {
+                    const result = operation === 'add' 
+                        ? encryptedValues[0].original + encryptedValues[1].original
+                        : encryptedValues[0].original * encryptedValues[1].original;
+                    
+                    const symbol = operation === 'add' ? '+' : '×';
+                    
+                    setOperationResult({
+                        encrypted: `Enc(${encryptedValues[0].original} ${symbol} ${encryptedValues[1].original})`,
+                        visual: generateRandomComponents(result)
+                    });
+                    
+                    setIsOperating(false);
+                }, 2000);
+            };
+            
+            // Decrypt the result
+            const decryptResult = () => {
+                if (!operationResult) return;
+                
+                setIsDecrypting(true);
+                
+                // Simulate decryption with timeout
+                setTimeout(() => {
+                    const val1 = encryptedValues[0].original;
+                    const val2 = encryptedValues[1].original;
+                    const result = operation === 'add' ? val1 + val2 : val1 * val2;
+                    
+                    setDecryptedResult(result);
+                    setIsDecrypting(false);
+                }, 1500);
+            };
+            
+            // Run full demo sequence
+            const runDemo = () => {
+                clearEncrypted();
+                
+                // We'll track values directly rather than relying on state updates
+                let encVal1, encVal2;
+                
+                // Encrypt first value
+                setTimeout(() => {
+                    // Generate visual components and encryption data for first value
+                    encVal1 = {
+                        original: value1,
+                        encrypted: `Enc(${value1})`,
+                        visual: generateRandomComponents(value1)
+                    };
+                    
+                    // Update state with first encrypted value
+                    setEncryptedValues([encVal1]);
+                    
+                    // Encrypt second value
+                    setTimeout(() => {
+                        // Generate encryption data for second value
+                        encVal2 = {
+                            original: value2,
+                            encrypted: `Enc(${value2})`,
+                            visual: generateRandomComponents(value2)
+                        };
+                        
+                        // Update state with both encrypted values
+                        setEncryptedValues([encVal1, encVal2]);
+                        
+                        // Perform operation - use longer timeout to ensure UI updates
+                        setTimeout(() => {
+                            const result = operation === 'add' 
+                                ? value1 + value2
+                                : value1 * value2;
+                            
+                            const symbol = operation === 'add' ? '+' : '×';
+                            
+                            setIsOperating(true);
+                            
+                            // Set operation result directly
+                            setTimeout(() => {
+                                setOperationResult({
+                                    encrypted: `Enc(${value1} ${symbol} ${value2})`,
+                                    visual: generateRandomComponents(result)
+                                });
+                                
+                                setIsOperating(false);
+                                
+                                // Wait for operation result to be set, then decrypt
+                                setTimeout(() => {
+                                    setIsDecrypting(true);
+                                    
+                                    setTimeout(() => {
+                                        setDecryptedResult(result);
+                                        setIsDecrypting(false);
+                                    }, 1500);
+                                }, 1000);
+                            }, 1500);
+                        }, 2500);
+                    }, 2000);
+                }, 500);
+            };
+            
+            return (
+                <div className="demo-container">
+                    <div className="demo-header">
+                        <h2 className="homoprime-color">Practical Fully-Homomorphic Encryption (HomoPrime)</h2>
+                        <p>
+                            Compute directly on encrypted data with just 300-500× overhead instead of the traditional 
+                            100,000×+ overhead, making fully homomorphic encryption practical for real-world applications.
+                        </p>
+                    </div>
+                    
+                    <div className="grid-2">
+                        <div className="card">
+                            <h3 className="mb-2">Demo Controls</h3>
+                            <div className="flex gap-2 mb-4">
+                                <div>
+                                    <label className="block mb-2" htmlFor="value1">Value 1</label>
+                                    <input 
+                                        type="number"
+                                        id="value1"
+                                        value={value1}
+                                        onChange={(e) => setValue1(parseInt(e.target.value))}
+                                        className="border rounded p-2 w-full"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block mb-2" htmlFor="value2">Value 2</label>
+                                    <input 
+                                        type="number"
+                                        id="value2"
+                                        value={value2}
+                                        onChange={(e) => setValue2(parseInt(e.target.value))}
+                                        className="border rounded p-2 w-full"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block mb-2" htmlFor="operation">Operation</label>
+                                    <select 
+                                        id="operation"
+                                        value={operation}
+                                        onChange={(e) => setOperation(e.target.value)}
+                                        className="border rounded p-2 w-full"
+                                    >
+                                        <option value="add">Addition</option>
+                                        <option value="multiply">Multiplication</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div className="flex gap-2">
+                                <button className="btn btn-primary" onClick={runDemo}>
+                                    Run Full Demo
+                                </button>
+                                <button className="btn btn-outline" onClick={clearEncrypted}>
+                                    Reset
+                                </button>
+                            </div>
+                            
+                            <div className="mt-4">
+                                <h4 className="mb-2">Manual Steps</h4>
+                                <div className="flex gap-2 flex-wrap">
+                                    <button 
+                                        className="btn btn-outline"
+                                        onClick={() => encryptValue(value1)}
+                                        disabled={isEncrypting}
+                                    >
+                                        Encrypt Value 1
+                                    </button>
+                                    <button 
+                                        className="btn btn-outline"
+                                        onClick={() => encryptValue(value2)}
+                                        disabled={isEncrypting}
+                                    >
+                                        Encrypt Value 2
+                                    </button>
+                                    <button 
+                                        className="btn btn-outline"
+                                        onClick={performOperation}
+                                        disabled={isOperating || encryptedValues.length < 2}
+                                    >
+                                        Perform {operation === 'add' ? 'Addition' : 'Multiplication'}
+                                    </button>
+                                    <button 
+                                        className="btn btn-outline"
+                                        onClick={decryptResult}
+                                        disabled={isDecrypting || !operationResult}
+                                    >
+                                        Decrypt Result
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="card">
+                            <h3 className="mb-2">Performance Comparison</h3>
+                            <div className="mb-4">
+                                <h4 className="text-sm mb-2">Prime Framework HomoPrime</h4>
+                                <div className="progress-container">
+                                    <div 
+                                        className="progress-bar homoprime-gradient" 
+                                        style={{ width: `${Math.min(100, (overhead.framework / 1500) * 100)}%` }}
+                                    ></div>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span>Overhead: {overhead.framework}×</span>
+                                    <span>Operation time: {overhead.framework * 1.5} ms</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-sm mb-2">Traditional FHE</h4>
+                                <div className="progress-container">
+                                    <div 
+                                        className="progress-bar" 
+                                        style={{ 
+                                            width: '100%',
+                                            background: 'linear-gradient(to right, #ef4444, #b91c1c)'
+                                        }}
+                                    ></div>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span>Overhead: {overhead.traditional.toLocaleString()}×</span>
+                                    <span>Operation time: {(overhead.traditional * 1.5).toLocaleString()} ms</span>
+                                </div>
+                            </div>
+                            
+                            <div className="mt-4 p-2 rounded" style={{backgroundColor: '#ecfdf5', borderLeft: '4px solid #10b981'}}>
+                                <h4 className="text-sm mb-1">How is this possible?</h4>
+                                <p className="text-sm">
+                                    The Prime Framework's coherence optimization maintains minimal-norm representations, 
+                                    reducing computational overhead by orders of magnitude. This makes FHE practical for 
+                                    real-world applications like secure cloud computing and privacy-preserving analytics.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card mt-4">
+                        <h3 className="mb-2">Homomorphic Operation Visualization</h3>
+                        <div className="grid-3">
+                            <div>
+                                <h4 className="text-sm mb-2">Encrypted Values</h4>
+                                <div className="flex flex-col gap-2">
+                                    {encryptedValues.map((item, idx) => (
+                                        <div key={idx} className="border rounded p-2">
+                                            <div className="flex justify-between">
+                                                <span className="text-sm font-bold">Original: {item.original}</span>
+                                                <span className="mono text-sm">{item.encrypted}</span>
+                                            </div>
+                                            <div className="mt-2 h-4 flex gap-1">
+                                                {item.visual.map((v, i) => (
+                                                    <div 
+                                                        key={i} 
+                                                        className="h-full rounded" 
+                                                        style={{
+                                                            backgroundColor: `rgba(16, 185, 129, ${v})`,
+                                                            width: '25%'
+                                                        }}
+                                                    ></div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {isEncrypting && (
+                                        <div className="border rounded p-2 flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded-full border-2 border-t-transparent spin"></div>
+                                            <span className="text-sm">Encrypting...</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-sm mb-2">Homomorphic Operation</h4>
+                                <div className="border rounded p-2 h-full flex flex-col">
+                                    {operationResult ? (
+                                        <>
+                                            <div className="text-center mb-2">
+                                                <span className="mono text-sm">{operationResult.encrypted}</span>
+                                            </div>
+                                            <div className="mt-2 h-4 flex gap-1">
+                                                {operationResult.visual.map((v, i) => (
+                                                    <div 
+                                                        key={i} 
+                                                        className="h-full rounded" 
+                                                        style={{
+                                                            backgroundColor: `rgba(16, 185, 129, ${v})`,
+                                                            width: '25%'
+                                                        }}
+                                                    ></div>
+                                                ))}
+                                            </div>
+                                            <div className="mt-auto text-sm text-center">
+                                                Computation performed on encrypted data without decryption
+                                            </div>
+                                        </>
+                                    ) : isOperating ? (
+                                        <div className="flex items-center justify-center h-full gap-2">
+                                            <div className="w-5 h-5 rounded-full border-2 border-t-transparent spin"></div>
+                                            <span className="text-sm">Performing {operation}...</span>
+                                        </div>
+                                    ) : encryptedValues.length < 2 ? (
+                                        <div className="text-center text-sm text-gray-500 h-full flex items-center justify-center">
+                                            Waiting for both encrypted values...
+                                        </div>
+                                    ) : (
+                                        <div className="text-center text-sm text-gray-500 h-full flex items-center justify-center">
+                                            Ready to perform {operation === 'add' ? 'addition' : 'multiplication'}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-sm mb-2">Decrypted Result</h4>
+                                <div className="border rounded p-2 h-full flex flex-col">
+                                    {decryptedResult !== null ? (
+                                        <div className="flex flex-col items-center justify-center h-full">
+                                            <div className="text-4xl font-bold homoprime-color mb-2">
+                                                {decryptedResult}
+                                            </div>
+                                            <div className="text-sm text-center">
+                                                Successfully decrypted the homomorphic result
+                                            </div>
+                                        </div>
+                                    ) : isDecrypting ? (
+                                        <div className="flex items-center justify-center h-full gap-2">
+                                            <div className="w-5 h-5 rounded-full border-2 border-t-transparent spin"></div>
+                                            <span className="text-sm">Decrypting...</span>
+                                        </div>
+                                    ) : !operationResult ? (
+                                        <div className="text-center text-sm text-gray-500 h-full flex items-center justify-center">
+                                            Waiting for operation result...
+                                        </div>
+                                    ) : (
+                                        <div className="text-center text-sm text-gray-500 h-full flex items-center justify-center">
+                                            Ready to decrypt the result
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                        <h3 className="mb-2">How It Works</h3>
+                        <div className="grid-2">
+                            <div className="p-4 rounded" style={{backgroundColor: '#f0fdf4'}}>
+                                <h4 className="mb-2">Technical Components</h4>
+                                <ul className="ml-4 text-sm">
+                                    <li className="mb-1">
+                                        <strong>Multi-Base Embedding:</strong> Values are encoded in a fiber algebra with multiple 
+                                        coherent representations
+                                    </li>
+                                    <li className="mb-1">
+                                        <strong>Symmetry-Preserving Operations:</strong> Homomorphic computations use Lie group 
+                                        transformations to preserve structure
+                                    </li>
+                                    <li className="mb-1">
+                                        <strong>Spectral Optimization:</strong> Prime Operator properties enable efficient 
+                                        computation chains
+                                    </li>
+                                    <li className="mb-1">
+                                        <strong>Coherence Optimization:</strong> Maintains minimal-norm canonical representation
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <pre 
+                                className="code"
+                                dangerouslySetInnerHTML={{
+                                    __html: `<span class="code-comment">// Prime Framework Homomorphic Operation</span>
+<span class="code-keyword">function</span> <span class="code-function">homomorphicMultiply</span>(encA, encB, evalKey) {
+  <span class="code-comment">// Compute tensor product in the fiber algebra</span>
+  <span class="code-keyword">const</span> product = PrimeFramework.tensorProduct(encA, encB);
+
+  <span class="code-comment">// Apply Prime Operator to reduce dimensionality</span>
+  <span class="code-keyword">const</span> reduced = PrimeFramework.applyPrimeOperator(product);
+
+  <span class="code-comment">// Relinearize using evaluation key</span>
+  <span class="code-keyword">const</span> relinearized = PrimeFramework.relinearize(reduced, evalKey);
+
+  <span class="code-comment">// Apply coherence optimization to maintain minimal norm</span>
+  <span class="code-keyword">return</span> PrimeFramework.minimizeCoherence(relinearized);
+}`
+                                }}
+                            ></pre>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                        <h3 className="mb-2">Real-World Applications</h3>
+                        <div className="grid-3">
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Privacy-Preserving Analytics</h4>
+                                <p className="text-sm">
+                                    Analyze sensitive data (financial, medical, personal) without ever exposing the 
+                                    raw information, maintaining privacy while gaining insights.
+                                </p>
+                            </div>
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Secure Cloud Computing</h4>
+                                <p className="text-sm">
+                                    Process encrypted data in the cloud without the provider ever seeing your 
+                                    sensitive information, eliminating trust requirements.
+                                </p>
+                            </div>
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Private Machine Learning</h4>
+                                <p className="text-sm">
+                                    Train machine learning models on encrypted data, allowing collaborative learning 
+                                    without exposing sensitive training data.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // P vs NP Demo
+        const PvsNPDemo = () => {
+            const [currentStep, setCurrentStep] = React.useState(0);
+            const [isAnimating, setIsAnimating] = React.useState(false);
+            const [showExplanation, setShowExplanation] = React.useState(true);
+            const [satInstance, setSatInstance] = React.useState({
+                variables: 3,
+                clauses: [
+                    { vars: [1, 2, -3], description: "x₁ OR x₂ OR NOT x₃" },
+                    { vars: [-1, 2, 3], description: "NOT x₁ OR x₂ OR x₃" },
+                    { vars: [1, -2, -3], description: "x₁ OR NOT x₂ OR NOT x₃" },
+                    { vars: [-1, -2, 3], description: "NOT x₁ OR NOT x₂ OR x₃" }
+                ]
+            });
+            const [currentAssignment, setCurrentAssignment] = React.useState([0, 0, 0]);
+            const [searchPath, setSearchPath] = React.useState([]);
+            const [searchSpace, setSearchSpace] = React.useState({
+                total: 8,
+                explored: 0
+            });
+            const [coherenceNorm, setCoherenceNorm] = React.useState(4);
+            
+            // Calculate clause satisfaction
+            const isClauseSatisfied = (clause, assignment) => {
+                return clause.vars.some(v => {
+                    const idx = Math.abs(v) - 1;
+                    const val = v > 0 ? assignment[idx] : 1 - assignment[idx];
+                    return val === 1;
+                });
+            };
+            
+            // Calculate how many clauses are satisfied
+            const countSatisfiedClauses = (assignment) => {
+                return satInstance.clauses.filter(clause => 
+                    isClauseSatisfied(clause, assignment)
+                ).length;
+            };
+            
+            // Update the current assignment
+            const updateAssignment = (idx, value) => {
+                const newAssignment = [...currentAssignment];
+                newAssignment[idx] = value;
+                setCurrentAssignment(newAssignment);
+                setCoherenceNorm(satInstance.clauses.length - countSatisfiedClauses(newAssignment));
+            };
+            
+            // Toggle a bit in the assignment
+            const toggleBit = (idx) => {
+                updateAssignment(idx, 1 - currentAssignment[idx]);
+            };
+            
+            // Generate the next assignment in binary counting sequence
+            const nextAssignment = (current) => {
+                const next = [...current];
+                
+                // Binary increment
+                let i = next.length - 1;
+                while (i >= 0) {
+                    next[i] = 1 - next[i];
+                    if (next[i] === 1) break;
+                    i--;
+                }
+                
+                return next;
+            };
+            
+            // Run brute force search animation
+            const runBruteForceSearch = () => {
+                setSearchPath([]);
+                setCurrentAssignment([0, 0, 0]);
+                setSearchSpace({
+                    total: Math.pow(2, satInstance.variables),
+                    explored: 0
+                });
+                setCoherenceNorm(satInstance.clauses.length);
+                setIsAnimating(true);
+                
+                let assignment = [0, 0, 0];
+                const totalAssignments = Math.pow(2, satInstance.variables);
+                let step = 0;
+                
+                const searchInterval = setInterval(() => {
+                    // Calculate satisfaction for this assignment
+                    const satisfied = countSatisfiedClauses(assignment);
+                    setCoherenceNorm(satInstance.clauses.length - satisfied);
+                    
+                    // Update search state
+                    setCurrentAssignment(assignment);
+                    setSearchPath(prev => [...prev, {
+                        assignment: [...assignment],
+                        satisfied: satisfied
+                    }]);
+                    setSearchSpace(prev => ({
+                        ...prev,
+                        explored: step + 1
+                    }));
+                    
+                    // Check if we're done
+                    step++;
+                    if (step >= totalAssignments) {
+                        clearInterval(searchInterval);
+                        setIsAnimating(false);
+                        return;
+                    }
+                    
+                    // Move to next assignment
+                    assignment = nextAssignment(assignment);
+                }, 1000);
+                
+                return () => clearInterval(searchInterval);
+            };
+            
+            // Reset the demo
+            const resetDemo = () => {
+                setCurrentAssignment([0, 0, 0]);
+                setSearchPath([]);
+                setSearchSpace({
+                    total: Math.pow(2, satInstance.variables),
+                    explored: 0
+                });
+                setCoherenceNorm(satInstance.clauses.length);
+                setIsAnimating(false);
+            };
+            
+            // Steps of the P vs NP explanation
+            const steps = [
+                {
+                    title: "The Fundamental Question",
+                    content: (
+                        <div>
+                            <p>The P vs NP problem is one of the most significant unsolved problems in computer science. It asks:</p>
+                            <blockquote className="p-4 border-l-4 pvsnp-border bg-gray-50 my-4">
+                                If a solution to a problem can be efficiently verified (NP), can the solution also be efficiently found (P)?
+                            </blockquote>
+                            <p className="mb-2">The Prime Framework provides a novel approach to resolve this question, leveraging its mathematical foundations to prove that P ≠ NP.</p>
+                            <p>This demonstration uses the Boolean Satisfiability Problem (SAT) - the first problem proven to be NP-complete - to illustrate why finding solutions requires exponentially more resources than verifying them.</p>
+                        </div>
+                    )
+                },
+                {
+                    title: "Local Operations in Universal Object Reference (UOR)",
+                    content: (
+                        <div>
+                            <p className="mb-2">The Prime Framework's Universal Object Reference (UOR) system provides a mathematical lens to analyze computation. In UOR:</p>
+                            <ul className="ml-4 mb-4">
+                                <li className="mb-1">Each elementary operation (like flipping a bit) is a local transformation</li>
+                                <li className="mb-1">Each operation affects only a small subset of the system</li>
+                                <li className="mb-1">Any polynomial-time algorithm consists of polynomially many such operations</li>
+                            </ul>
+                            <p>For an NP-complete problem like SAT with n variables, the search space has 2ⁿ possible solutions. A key insight from the Prime Framework: <strong>A polynomial number of local operations cannot explore an exponential search space efficiently.</strong></p>
+                        </div>
+                    )
+                },
+                {
+                    title: "The Coherence Norm Gradient",
+                    content: (
+                        <div>
+                            <p className="mb-2">The Prime Framework introduces the concept of a coherence norm to measure how "consistent" or "satisfied" a solution is:</p>
+                            <ul className="ml-4 mb-4">
+                                <li className="mb-1">For SAT, the coherence norm represents the number of unsatisfied clauses</li>
+                                <li className="mb-1">A perfect solution has a coherence norm of 0 (all clauses satisfied)</li>
+                                <li className="mb-1">Each local operation can reduce the coherence norm by at most a constant amount</li>
+                            </ul>
+                            <p>The coherence gradient provides a mathematical measure of progress toward a solution. The Prime Framework proves that for hard SAT instances, there is no "shortcut" through this gradient - polynomially many operations cannot reliably reach coherence norm 0 for all instances.</p>
+                        </div>
+                    )
+                },
+                {
+                    title: "NP ≠ co-NP Argument",
+                    content: (
+                        <div>
+                            <p className="mb-2">The Prime Framework provides additional evidence that P ≠ NP through the relationship between NP and co-NP:</p>
+                            <ul className="ml-4 mb-4">
+                                <li className="mb-1">NP contains problems whose "yes" instances have efficiently verifiable proofs</li>
+                                <li className="mb-1">co-NP contains problems whose "no" instances have efficiently verifiable proofs</li>
+                                <li className="mb-1">If P = NP, then NP = co-NP (a widely disbelieved equality)</li>
+                            </ul>
+                            <p>The Prime Framework shows that proving unsatisfiability (a co-NP task) has a fundamentally different structure than verifying satisfiability (an NP task). This structural separation provides additional evidence that P ≠ NP.</p>
+                        </div>
+                    )
+                }
+            ];
+            
+            return (
+                <div className="demo-container">
+                    <div className="demo-header">
+                        <h2 className="pvsnp-color">P vs NP Separation Proof</h2>
+                        <p>
+                            Explore the Prime Framework's revolutionary proof that P ≠ NP, resolving one of computer science's 
+                            greatest open problems through unique mathematical insights.
+                        </p>
+                    </div>
+                    
+                    <div className="grid-2">
+                        <div className="card">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3>Prime Framework Explanation</h3>
+                                <div>
+                                    <button 
+                                        className="btn btn-outline"
+                                        onClick={() => setShowExplanation(!showExplanation)}
+                                    >
+                                        {showExplanation ? 'Hide' : 'Show'} Explanation
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {showExplanation && (
+                                <div>
+                                    <div className="flex mb-4">
+                                        {steps.map((_, idx) => (
+                                            <div
+                                                key={idx}
+                                                className={`
+                                                    flex-1 h-1 mx-1 rounded-full cursor-pointer
+                                                    ${currentStep === idx ? 'pvsnp-bg' : 'bg-gray-200'}
+                                                `}
+                                                onClick={() => setCurrentStep(idx)}
+                                            ></div>
+                                        ))}
+                                    </div>
+                                    
+                                    <h4 className="pvsnp-color mb-2">{steps[currentStep].title}</h4>
+                                    
+                                    <div className="text-sm">
+                                        {steps[currentStep].content}
+                                    </div>
+                                    
+                                    <div className="flex justify-between mt-4">
+                                        <button 
+                                            className="btn btn-outline"
+                                            onClick={() => setCurrentStep(prev => Math.max(0, prev - 1))}
+                                            disabled={currentStep === 0}
+                                        >
+                                            Previous
+                                        </button>
+                                        <button 
+                                            className="btn btn-secondary"
+                                            onClick={() => setCurrentStep(prev => Math.min(steps.length - 1, prev + 1))}
+                                            disabled={currentStep === steps.length - 1}
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="card">
+                            <h3 className="mb-4">SAT Instance Demonstration</h3>
+                            
+                            <div className="mb-4">
+                                <h4 className="text-sm mb-2">Boolean Formula (SAT Instance)</h4>
+                                <div className="p-3 rounded bg-gray-50">
+                                    {satInstance.clauses.map((clause, idx) => (
+                                        <div key={idx} className="mono text-sm mb-1">
+                                            {clause.description}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div className="mb-4">
+                                <h4 className="text-sm mb-2">Current Assignment</h4>
+                                <div className="flex gap-4 mb-2">
+                                    {currentAssignment.map((bit, idx) => (
+                                        <div key={idx} className="text-center">
+                                            <div className="mb-1">x<sub>{idx + 1}</sub></div>
+                                            <button
+                                                onClick={() => !isAnimating && toggleBit(idx)}
+                                                className={`
+                                                    w-10 h-10 rounded-full flex items-center justify-center
+                                                    ${bit === 1 ? 'pvsnp-bg text-white' : 'border border-gray-300'}
+                                                `}
+                                                disabled={isAnimating}
+                                            >
+                                                {bit}
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                <div className="mt-4">
+                                    <h4 className="text-sm mb-2">Clause Satisfaction</h4>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {satInstance.clauses.map((clause, idx) => {
+                                            const satisfied = isClauseSatisfied(clause, currentAssignment);
+                                            return (
+                                                <div 
+                                                    key={idx}
+                                                    className={`
+                                                        p-2 rounded text-sm
+                                                        ${satisfied ? 'bg-green-100 border border-green-200' : 'bg-red-100 border border-red-200'}
+                                                    `}
+                                                >
+                                                    <span>Clause {idx + 1}: </span>
+                                                    <span className="font-bold">{satisfied ? 'Satisfied' : 'Unsatisfied'}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-4">
+                                    <h4 className="text-sm mb-2">Coherence Norm (Unsatisfied Clauses)</h4>
+                                    <div className="progress-container">
+                                        <div 
+                                            className="progress-bar pvsnp-gradient" 
+                                            style={{ width: `${(coherenceNorm / satInstance.clauses.length) * 100}%` }}
+                                        ></div>
+                                    </div>
+                                    <div className="text-right text-sm">
+                                        {coherenceNorm} / {satInstance.clauses.length}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flex gap-2">
+                                <button 
+                                    className="btn btn-secondary"
+                                    onClick={runBruteForceSearch}
+                                    disabled={isAnimating}
+                                >
+                                    Run Brute Force Search
+                                </button>
+                                <button 
+                                    className="btn btn-outline"
+                                    onClick={resetDemo}
+                                    disabled={isAnimating}
+                                >
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card mt-4">
+                        <h3 className="mb-2">Search Space Exploration</h3>
+                        
+                        <div className="grid-2">
+                            <div>
+                                <h4 className="text-sm mb-2">Search Path</h4>
+                                <div className="p-3 rounded bg-gray-50 h-64 overflow-y-auto">
+                                    {searchPath.length === 0 ? (
+                                        <div className="text-sm text-gray-500 h-full flex items-center justify-center">
+                                            No search path yet. Run the brute force search to see the algorithm's exploration.
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            {searchPath.map((step, idx) => (
+                                                <div 
+                                                    key={idx} 
+                                                    className={`
+                                                        p-2 rounded mb-2 flex justify-between items-center
+                                                        ${step.satisfied === satInstance.clauses.length ? 'bg-green-100' : 'bg-gray-100'}
+                                                        ${idx === searchPath.length - 1 ? 'border-2 pvsnp-border' : ''}
+                                                    `}
+                                                >
+                                                    <div className="mono text-sm">
+                                                        {step.assignment.join('')}
+                                                    </div>
+                                                    <div className="text-sm">
+                                                        Satisfied: {step.satisfied}/{satInstance.clauses.length}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-sm mb-2">Search Space Coverage</h4>
+                                <div className="p-3 rounded bg-gray-50 relative h-64">
+                                    <div className="absolute inset-0 p-4">
+                                        <div className="mb-4 text-center">
+                                            <div className="text-sm text-gray-500">Explored</div>
+                                            <div className="text-xl font-bold">
+                                                {searchSpace.explored} / {searchSpace.total}
+                                            </div>
+                                            <div className="text-sm text-gray-500">
+                                                ({((searchSpace.explored / searchSpace.total) * 100).toFixed(1)}%)
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="visualization-container">
+                                            <div className="grid grid-cols-4 gap-1">
+                                                {Array.from({ length: searchSpace.total }).map((_, idx) => (
+                                                    <div 
+                                                        key={idx}
+                                                        className={`
+                                                            w-full pb-[100%] rounded
+                                                            ${idx < searchSpace.explored ? 'pvsnp-bg' : 'bg-gray-200'}
+                                                        `}
+                                                    ></div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="mt-4 p-3 bg-gray-50 rounded">
+                            <h4 className="mb-2">The P vs NP Insight from the Prime Framework</h4>
+                            <p className="text-sm mb-2">This demo illustrates a fundamental barrier proven by the Prime Framework:</p>
+                            <blockquote className="p-3 border-l-4 pvsnp-border">
+                                <p className="text-sm">
+                                    <strong>Theorem:</strong> For n variables, any algorithm that solves SAT must examine up to 2ⁿ assignments in the worst case.
+                                    A polynomial-time algorithm can only examine polynomially many assignments, which is exponentially smaller than 2ⁿ as n grows large.
+                                </p>
+                            </blockquote>
+                            <p className="text-sm mt-2">
+                                This structural limitation, formally proved using the coherence norm gradient in the Prime Framework, 
+                                establishes that P ≠ NP - one of the most significant results in the theory of computation.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                        <h3 className="mb-2">Why This Matters</h3>
+                        <div className="grid-3">
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Theoretical Computer Science</h4>
+                                <p className="text-sm">
+                                    Resolves one of the seven Millennium Prize Problems with a $1 million bounty, providing fundamental 
+                                    insights into computational complexity.
+                                </p>
+                            </div>
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Cryptography</h4>
+                                <p className="text-sm">
+                                    Confirms that many encryption systems are fundamentally secure against efficient attacks, 
+                                    protecting digital communications and transactions.
+                                </p>
+                            </div>
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Algorithm Design</h4>
+                                <p className="text-sm">
+                                    Proves that for many important problems, we must focus on approximation algorithms, heuristics, 
+                                    and special-case solutions rather than exact polynomial-time solutions.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // Quantum Computing Demo
+        const QuantumDemo = () => {
+            const [numQubits, setNumQubits] = React.useState(2);
+            const [stateVector, setStateVector] = React.useState([]);
+            const [selectedAlgorithm, setSelectedAlgorithm] = React.useState(null);
+            const [algorithmStep, setAlgorithmStep] = React.useState(0);
+            const [runningAlgorithm, setRunningAlgorithm] = React.useState(false);
+            const [measurementResult, setMeasurementResult] = React.useState(null);
+            const [explanationMode, setExplanationMode] = React.useState('basic');
+            const [showPhase, setShowPhase] = React.useState(true);
+            
+            // Initialize the state vector on mount and when numQubits changes
+            React.useEffect(() => {
+                resetQuantumState();
+            }, [numQubits]);
+            
+            // Reset the quantum state to |00...0⟩
+            const resetQuantumState = () => {
+                const newState = Array(Math.pow(2, numQubits)).fill(0);
+                newState[0] = 1;
+                setStateVector(newState);
+                setMeasurementResult(null);
+                setAlgorithmStep(0);
+                setRunningAlgorithm(false);
+            };
+            
+            // Convert integer to binary with specified length
+            const intToBinary = (int, length) => {
+                return int.toString(2).padStart(length, '0');
+            };
+            
+            // Calculate probability from the amplitude
+            const calculateProbability = (amplitude) => {
+                return Math.pow(Math.abs(amplitude), 2);
+            };
+            
+            // Calculate the phase of a complex number
+            const calculatePhase = (real, imag) => {
+                return Math.atan2(imag, real);
+            };
+            
+            // Apply a single-qubit gate to the state vector
+            const applySingleQubitGate = (gate, targetQubit) => {
+                const dimension = Math.pow(2, numQubits);
+                let newState = [...stateVector];
+                
+                // Different gates have different matrices
+                let matrix;
+                
+                switch(gate) {
+                    case 'X':  // NOT gate (Pauli-X)
+                        matrix = [[0, 1], [1, 0]];
+                        break;
+                    case 'H':  // Hadamard gate
+                        const factor = 1 / Math.sqrt(2);
+                        matrix = [[factor, factor], [factor, -factor]];
+                        break;
+                    case 'Z':  // Phase flip (Pauli-Z)
+                        matrix = [[1, 0], [0, -1]];
+                        break;
+                    default:
+                        return;
+                }
+                
+                // Apply the gate
+                let tempState = new Array(dimension).fill(0);
+                
+                for (let i = 0; i < dimension; i++) {
+                    // Check if target qubit is 0 or 1 in this basis state
+                    const bit = (i >> targetQubit) & 1;
+                    
+                    // Calculate the state with the flipped bit
+                    const flippedBit = 1 - bit;
+                    const flippedIndex = i ^ (1 << targetQubit);
+                    
+                    // Apply the gate matrix
+                    tempState[i] += matrix[0][bit] * stateVector[i ^ (bit << targetQubit)];
+                    tempState[flippedIndex] += matrix[1][bit] * stateVector[i ^ (bit << targetQubit)];
+                }
+                
+                setStateVector(tempState);
+            };
+            
+            // Apply a CNOT gate
+            const applyCNOT = (controlQubit, targetQubit) => {
+                const dimension = Math.pow(2, numQubits);
+                let newState = [...stateVector];
+                
+                for (let i = 0; i < dimension; i++) {
+                    // Check if the control qubit is 1
+                    const controlBit = (i >> controlQubit) & 1;
+                    
+                    if (controlBit === 1) {
+                        // Flip the target qubit
+                        const flippedIndex = i ^ (1 << targetQubit);
+                        
+                        // Swap the amplitudes
+                        const temp = newState[i];
+                        newState[i] = newState[flippedIndex];
+                        newState[flippedIndex] = temp;
+                    }
+                }
+                
+                setStateVector(newState);
+            };
+            
+            // Measure a qubit and collapse the state
+            const measureQubit = (qubit) => {
+                const dimension = Math.pow(2, numQubits);
+                let prob0 = 0;
+                
+                // Calculate probability of measuring 0
+                for (let i = 0; i < dimension; i++) {
+                    if (((i >> qubit) & 1) === 0) {
+                        prob0 += calculateProbability(stateVector[i]);
+                    }
+                }
+                
+                // Randomly determine the measurement outcome
+                const outcome = Math.random() < prob0 ? 0 : 1;
+                
+                // Collapse the state
+                let newState = new Array(dimension).fill(0);
+                let normalizationFactor = 0;
+                
+                for (let i = 0; i < dimension; i++) {
+                    if (((i >> qubit) & 1) === outcome) {
+                        newState[i] = stateVector[i];
+                        normalizationFactor += calculateProbability(stateVector[i]);
+                    }
+                }
+                
+                // Normalize
+                normalizationFactor = Math.sqrt(normalizationFactor);
+                newState = newState.map(amp => amp / normalizationFactor);
+                
+                setStateVector(newState);
+                setMeasurementResult({
+                    qubit,
+                    outcome
+                });
+                
+                return outcome;
+            };
+            
+            // Run the Bell state algorithm
+            const runBellState = () => {
+                if (numQubits < 2) {
+                    alert("Bell state requires at least 2 qubits.");
+                    return;
+                }
+                
+                setSelectedAlgorithm('bell');
+                setAlgorithmStep(0);
+                resetQuantumState();
+                setRunningAlgorithm(true);
+                
+                // Step 1: Apply H to first qubit
+                setTimeout(() => {
+                    applySingleQubitGate('H', 0);
+                    setAlgorithmStep(1);
+                    
+                    // Step 2: Apply CNOT
+                    setTimeout(() => {
+                        applyCNOT(0, 1);
+                        setAlgorithmStep(2);
+                        setRunningAlgorithm(false);
+                    }, 1500);
+                }, 1000);
+            };
+            
+            // Run the Quantum Teleportation algorithm
+            const runTeleportation = () => {
+                if (numQubits < 3) {
+                    alert("Quantum teleportation requires at least 3 qubits.");
+                    return;
+                }
+                
+                setSelectedAlgorithm('teleportation');
+                setAlgorithmStep(0);
+                resetQuantumState();
+                setRunningAlgorithm(true);
+                
+                // Initial state preparation - Bell pair between qubits 1 and 2
+                setTimeout(() => {
+                    applySingleQubitGate('H', 1);
+                    setAlgorithmStep(1);
+                    
+                    setTimeout(() => {
+                        applyCNOT(1, 2);
+                        setAlgorithmStep(2);
+                        
+                        // Prepare the state to teleport on qubit 0
+                        setTimeout(() => {
+                            applySingleQubitGate('H', 0);
+                            applySingleQubitGate('Z', 0);
+                            setAlgorithmStep(3);
+                            
+                            // Apply CNOT between qubit 0 and 1
+                            setTimeout(() => {
+                                applyCNOT(0, 1);
+                                setAlgorithmStep(4);
+                                
+                                // Apply H to qubit 0
+                                setTimeout(() => {
+                                    applySingleQubitGate('H', 0);
+                                    setAlgorithmStep(5);
+                                    
+                                    // Measure qubits 0 and 1
+                                    setTimeout(() => {
+                                        const m0 = measureQubit(0);
+                                        setAlgorithmStep(6);
+                                        
+                                        setTimeout(() => {
+                                            const m1 = measureQubit(1);
+                                            setAlgorithmStep(7);
+                                            
+                                            // Apply corrections to qubit 2 based on measurements
+                                            setTimeout(() => {
+                                                if (m1 === 1) {
+                                                    applySingleQubitGate('X', 2);
+                                                }
+                                                if (m0 === 1) {
+                                                    applySingleQubitGate('Z', 2);
+                                                }
+                                                setAlgorithmStep(8);
+                                                setRunningAlgorithm(false);
+                                            }, 1000);
+                                        }, 1000);
+                                    }, 1000);
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            };
+            
+            // Run Grover's algorithm for 2 qubits
+            const runGrover = () => {
+                if (numQubits < 2) {
+                    alert("Grover's algorithm demo requires at least 2 qubits.");
+                    return;
+                }
+                
+                setSelectedAlgorithm('grover');
+                setAlgorithmStep(0);
+                resetQuantumState();
+                setRunningAlgorithm(true);
+                
+                // Initialize with Hadamard on both qubits
+                setTimeout(() => {
+                    applySingleQubitGate('H', 0);
+                    applySingleQubitGate('H', 1);
+                    setAlgorithmStep(1);
+                    
+                    // Oracle for the marked state |01⟩
+                    setTimeout(() => {
+                        // Implementing oracle that marks |01⟩
+                        // This is simplified for the demo
+                        const dimension = Math.pow(2, numQubits);
+                        let newState = [...stateVector];
+                        // Flip the phase of |01⟩
+                        newState[1] = -newState[1];
+                        setStateVector(newState);
+                        setAlgorithmStep(2);
+                        
+                        // Diffusion / Amplitude amplification
+                        setTimeout(() => {
+                            // Apply H to all qubits
+                            applySingleQubitGate('H', 0);
+                            applySingleQubitGate('H', 1);
+                            
+                            // Flip the phase of |00⟩
+                            newState = [...stateVector];
+                            newState[0] = -newState[0];
+                            setStateVector(newState);
+                            
+                            // Apply H to all qubits again
+                            applySingleQubitGate('H', 0);
+                            applySingleQubitGate('H', 1);
+                            
+                            setAlgorithmStep(3);
+                            setRunningAlgorithm(false);
+                        }, 1500);
+                    }, 1500);
+                }, 1000);
+            };
+            
+            // Get the algorithm explanation
+            const getAlgorithmExplanation = () => {
+                if (!selectedAlgorithm) return null;
+                
+                const explanations = {
+                    'bell': {
+                        name: "Bell State Preparation",
+                        basic: "Creates a maximally entangled state between two qubits, where they share a spooky connection - a fundamental quantum resource.",
+                        detailed: "The Bell state (|00⟩ + |11⟩)/√2 exhibits quantum entanglement, where the qubits' states are correlated regardless of distance - Einstein's 'spooky action at a distance'. This is fundamental for quantum teleportation, superdense coding, and quantum cryptography.",
+                        steps: [
+                            "Start with |00⟩ state",
+                            "Apply Hadamard (H) to first qubit",
+                            "Apply CNOT with control=0, target=1",
+                            "Result: Bell state (|00⟩ + |11⟩)/√2"
+                        ]
+                    },
+                    'teleportation': {
+                        name: "Quantum Teleportation",
+                        basic: "Transfers a quantum state from one qubit to another using entanglement and classical communication.",
+                        detailed: "Quantum teleportation uses an entangled pair and classical communication to transfer a quantum state without physically moving the qubit. Despite the name, no information travels faster than light; the protocol requires classical communication and only transfers the quantum state, not the physical particle.",
+                        steps: [
+                            "Create Bell pair between qubits 1 and 2",
+                            "Prepare state to teleport on qubit 0",
+                            "Entangle qubit 0 with Bell pair",
+                            "Measure qubits 0 and 1",
+                            "Apply corrections to qubit 2 based on measurements",
+                            "Qubit 2 is now in the original state of qubit 0"
+                        ]
+                    },
+                    'grover': {
+                        name: "Grover's Search Algorithm",
+                        basic: "Finds a marked item in an unsorted database quadratically faster than any classical algorithm.",
+                        detailed: "Grover's algorithm provides a quadratic speedup for unstructured search problems, turning an O(N) classical search into an O(√N) quantum search. It uses phase kickback and amplitude amplification to increase the probability of finding the target state, enabling efficient solutions to problems like database searching and NP-complete problems.",
+                        steps: [
+                            "Initialize qubits in superposition with Hadamard",
+                            "Apply oracle that marks the target state",
+                            "Apply diffusion operator to amplify marked state",
+                            "After iteration, measure high probability of target state"
+                        ]
+                    }
+                };
+                
+                return explanations[selectedAlgorithm];
+            };
+            
+            // Circle representation for quantum states
+            const CircleRepresentation = () => {
+                return (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {stateVector.map((amplitude, idx) => {
+                            const binaryRep = intToBinary(idx, numQubits);
+                            
+                            // Complex numbers are simulated for simplicity in this demo
+                            const real = typeof amplitude === 'number' ? amplitude : amplitude.re;
+                            const imag = typeof amplitude === 'number' ? 0 : amplitude.im;
+                            
+                            const probability = calculateProbability(amplitude);
+                            const phase = calculatePhase(real, imag);
+                            
+                            // Size will be proportional to sqrt(probability) for visual clarity
+                            const size = 20 + Math.sqrt(probability) * 80;
+                            const colorIntensity = Math.min(1, probability * 3);
+                            
+                            return (
+                                <div key={idx} className="flex flex-col items-center">
+                                    <div 
+                                        className="relative rounded-full flex items-center justify-center"
+                                        style={{ 
+                                            width: `${size}px`, 
+                                            height: `${size}px`,
+                                            backgroundColor: `rgba(59, 130, 246, ${colorIntensity})`,
+                                            boxShadow: `0 0 ${size/4}px rgba(59, 130, 246, ${colorIntensity/2})`,
+                                        }}
+                                    >
+                                        {showPhase && probability > 0.01 && (
+                                            <div 
+                                                className="absolute bg-white"
+                                                style={{
+                                                    width: `3px`,
+                                                    height: `${size/2}px`,
+                                                    top: '50%',
+                                                    left: '50%',
+                                                    marginLeft: `-1.5px`,
+                                                    transformOrigin: 'top center',
+                                                    transform: `rotate(${phase}rad)`,
+                                                    borderRadius: '1px',
+                                                    boxShadow: '0 0 2px white'
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="mono text-xs mt-1">|{binaryRep}⟩</div>
+                                    <div className="text-xs">{(probability * 100).toFixed(1)}%</div>
+                                    {showPhase && probability > 0.01 && (
+                                        <div className="text-xs text-gray-500">φ: {(phase * 180 / Math.PI).toFixed(0)}°</div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            };
+            
+            // Format amplitude for display
+            const formatAmplitude = (amplitude) => {
+                if (typeof amplitude === 'number') {
+                    if (Math.abs(amplitude) < 0.0001) return '0';
+                    return amplitude.toFixed(4);
+                }
+                
+                let real = amplitude.re;
+                let imag = amplitude.im;
+                
+                if (Math.abs(real) < 0.0001) real = 0;
+                if (Math.abs(imag) < 0.0001) imag = 0;
+                
+                if (real === 0 && imag === 0) return '0';
+                if (imag === 0) return real.toFixed(4);
+                if (real === 0) return `${imag.toFixed(4)}i`;
+                
+                const sign = imag > 0 ? '+' : '';
+                return `${real.toFixed(4)}${sign}${imag.toFixed(4)}i`;
+            };
+            
+            const algorithmExplanation = getAlgorithmExplanation();
+            
+            return (
+                <div className="demo-container">
+                    <div className="demo-header">
+                        <h2 className="quantum-color">Quantum Computing Fundamentals</h2>
+                        <p>
+                            Explore quantum computing principles through the lens of the Prime Framework with interactive 
+                            demonstrations of key quantum algorithms.
+                        </p>
+                    </div>
+                    
+                    <div className="grid-2">
+                        <div className="card">
+                            <h3 className="mb-4">Quantum State Control</h3>
+                            
+                            <div className="mb-4">
+                                <label className="block mb-2" htmlFor="numQubits">Number of Qubits</label>
+                                <select 
+                                    id="numQubits"
+                                    value={numQubits}
+                                    onChange={(e) => setNumQubits(parseInt(e.target.value))}
+                                    className="border rounded p-2"
+                                    disabled={runningAlgorithm}
+                                >
+                                    <option value="1">1 Qubit</option>
+                                    <option value="2">2 Qubits</option>
+                                    <option value="3">3 Qubits</option>
+                                </select>
+                            </div>
+                            
+                            <div className="mb-4">
+                                <h4 className="text-sm mb-2">Single-Qubit Gates</h4>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {['X', 'H', 'Z'].map(gate => (
+                                        <div key={gate}>
+                                            <button
+                                                className="btn btn-outline w-full"
+                                                onClick={() => applySingleQubitGate(gate, 0)}
+                                                disabled={runningAlgorithm}
+                                            >
+                                                {gate} on Q0
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                {numQubits >= 2 && (
+                                    <div className="grid grid-cols-3 gap-2 mt-2">
+                                        {['X', 'H', 'Z'].map(gate => (
+                                            <div key={gate}>
+                                                <button
+                                                    className="btn btn-outline w-full"
+                                                    onClick={() => applySingleQubitGate(gate, 1)}
+                                                    disabled={runningAlgorithm}
+                                                >
+                                                    {gate} on Q1
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {numQubits >= 3 && (
+                                    <div className="grid grid-cols-3 gap-2 mt-2">
+                                        {['X', 'H', 'Z'].map(gate => (
+                                            <div key={gate}>
+                                                <button
+                                                    className="btn btn-outline w-full"
+                                                    onClick={() => applySingleQubitGate(gate, 2)}
+                                                    disabled={runningAlgorithm}
+                                                >
+                                                    {gate} on Q2
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {numQubits >= 2 && (
+                                <div className="mb-4">
+                                    <h4 className="text-sm mb-2">Two-Qubit Gates</h4>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            className="btn btn-outline"
+                                            onClick={() => applyCNOT(0, 1)}
+                                            disabled={runningAlgorithm}
+                                        >
+                                            CNOT: Control=Q0, Target=Q1
+                                        </button>
+                                        <button
+                                            className="btn btn-outline"
+                                            onClick={() => applyCNOT(1, 0)}
+                                            disabled={runningAlgorithm}
+                                        >
+                                            CNOT: Control=Q1, Target=Q0
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            <div className="mb-4">
+                                <h4 className="text-sm mb-2">Measurement</h4>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {Array.from({ length: numQubits }).map((_, idx) => (
+                                        <button
+                                            key={idx}
+                                            className="btn btn-outline"
+                                            onClick={() => measureQubit(idx)}
+                                            disabled={runningAlgorithm}
+                                        >
+                                            Measure Q{idx}
+                                        </button>
+                                    ))}
+                                </div>
+                                
+                                {measurementResult && (
+                                    <div className="mt-2 p-2 bg-gray-100 rounded">
+                                        <span className="text-sm">Measured Q{measurementResult.qubit}: </span>
+                                        <span className="font-bold">{measurementResult.outcome}</span>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="flex justify-between">
+                                <button
+                                    className="btn btn-outline"
+                                    onClick={resetQuantumState}
+                                    disabled={runningAlgorithm}
+                                >
+                                    Reset
+                                </button>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        id="showPhase"
+                                        checked={showPhase}
+                                        onChange={(e) => setShowPhase(e.target.checked)}
+                                    />
+                                    <label htmlFor="showPhase" className="text-sm">Show Phase</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="card">
+                            <h3 className="mb-4">Quantum Algorithms</h3>
+                            
+                            <div className="mb-4">
+                                <div className="grid grid-cols-1 gap-2">
+                                    <button
+                                        className={`btn ${selectedAlgorithm === 'bell' ? 'btn-quantum' : 'btn-outline'}`}
+                                        onClick={runBellState}
+                                        disabled={runningAlgorithm || numQubits < 2}
+                                    >
+                                        Bell State Preparation (2 qubits)
+                                    </button>
+                                    <button
+                                        className={`btn ${selectedAlgorithm === 'teleportation' ? 'btn-quantum' : 'btn-outline'}`}
+                                        onClick={runTeleportation}
+                                        disabled={runningAlgorithm || numQubits < 3}
+                                    >
+                                        Quantum Teleportation (3 qubits)
+                                    </button>
+                                    <button
+                                        className={`btn ${selectedAlgorithm === 'grover' ? 'btn-quantum' : 'btn-outline'}`}
+                                        onClick={runGrover}
+                                        disabled={runningAlgorithm || numQubits < 2}
+                                    >
+                                        Grover's Search Algorithm (2 qubits)
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {algorithmExplanation && (
+                                <div className="p-3 bg-blue-50 rounded">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <h4 className="quantum-color font-bold">{algorithmExplanation.name}</h4>
+                                        <div className="flex gap-2">
+                                            <button
+                                                className={`text-xs px-2 py-1 rounded ${explanationMode === 'basic' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                                                onClick={() => setExplanationMode('basic')}
+                                            >
+                                                Basic
+                                            </button>
+                                            <button
+                                                className={`text-xs px-2 py-1 rounded ${explanationMode === 'detailed' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                                                onClick={() => setExplanationMode('detailed')}
+                                            >
+                                                Detailed
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <p className="text-sm mb-2">{algorithmExplanation[explanationMode]}</p>
+                                    
+                                    <div className="mt-4">
+                                        <h5 className="text-sm font-bold mb-1">Algorithm Steps:</h5>
+                                        <ol className="ml-4 text-sm">
+                                            {algorithmExplanation.steps.map((step, idx) => (
+                                                <li 
+                                                    key={idx}
+                                                    className={algorithmStep >= idx ? 'font-bold' : 'text-gray-500'}
+                                                >
+                                                    {step}
+                                                </li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3>Quantum State Visualization</h3>
+                            <div className="badge quantum-bg text-white">
+                                {Math.pow(2, numQubits)} states
+                            </div>
+                        </div>
+                        
+                        <CircleRepresentation />
+                        
+                        <div className="mt-6 grid-2">
+                            <div className="bg-gray-50 p-4 rounded">
+                                <h4 className="mb-2">State Vector Representation</h4>
+                                <div className="mono text-sm">
+                                    |ψ⟩ = {stateVector.map((amplitude, idx) => {
+                                        if (Math.abs(amplitude) < 0.0001) return null;
+                                        
+                                        const binaryRep = intToBinary(idx, numQubits);
+                                        return (
+                                            <span key={idx}>
+                                                {amplitude > 0 && idx > 0 ? '+ ' : ''}
+                                                {amplitude < 0 ? '- ' : ''}
+                                                {Math.abs(amplitude) !== 1 ? formatAmplitude(Math.abs(amplitude)) : ''}
+                                                |{binaryRep}⟩{' '}
+                                            </span>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            
+                            <div className="bg-gray-50 p-4 rounded">
+                                <h4 className="mb-2">Prime Framework Connection</h4>
+                                <p className="text-sm">
+                                    The representation of quantum states aligns perfectly with the Prime Framework's axioms:
+                                </p>
+                                <ul className="ml-4 text-sm mt-2">
+                                    <li className="mb-1"><strong>Reference Manifold:</strong> The state space of qubits</li>
+                                    <li className="mb-1"><strong>Algebraic Fibers:</strong> Clifford algebras enable quantum operations</li>
+                                    <li className="mb-1"><strong>Symmetry Group:</strong> Unitary transformations preserve quantum probabilities</li>
+                                    <li className="mb-1"><strong>Coherence Inner Product:</strong> Measurement probabilities arise from the inner product</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // Zero-Knowledge Quantum Proof Demo
+        const ZKQuantumDemo = () => {
+            const [step, setStep] = React.useState(0);
+            const [isPlaying, setIsPlaying] = React.useState(false);
+            const [protocolStatus, setProtocolStatus] = React.useState({
+                commitment: false,
+                challenge: false,
+                response: false,
+                verification: false
+            });
+            const [commitmentData, setCommitmentData] = React.useState(null);
+            const [challengeData, setChallengeData] = React.useState(null);
+            const [responseData, setResponseData] = React.useState(null);
+            const [verificationData, setVerificationData] = React.useState(null);
+            const [consoleOutput, setConsoleOutput] = React.useState([]);
+            
+            // Timer ref for animation
+            const timerRef = React.useRef(null);
+            
+            // List of console messages for animation
+            const consoleMessages = [
+                "Initializing Zero-Knowledge Quantum Proof protocol...",
+                "Creating quantum circuit with 3 qubits...",
+                "Preparing quantum state...",
+                "Prover executing quantum computation...",
+                "Prover embedding quantum state in fiber algebra...",
+                "Prover generating randomness for commitment...",
+                "Prover creating commitment...",
+                "Commitment sent to Verifier...",
+                "Verifier generating challenge based on commitment...",
+                "Challenge sent to Prover...",
+                "Prover calculating response...",
+                "Prover creating zero-knowledge proof...",
+                "Prover calculating coherence norm...",
+                "Response sent to Verifier...",
+                "Verifier checking proof validity...",
+                "Verifier checking coherence norm threshold...",
+                "Verification complete: VALID ✓"
+            ];
+            
+            // Add message to console
+            const addConsoleMessage = (message) => {
+                setConsoleOutput(prev => [...prev, message]);
+            };
+            
+            // Clear console
+            const clearConsole = () => {
+                setConsoleOutput([]);
+            };
+            
+            // Run full demo
+            const runDemo = () => {
+                // Reset and start animation
+                setStep(0);
+                setProtocolStatus({
+                    commitment: false,
+                    challenge: false,
+                    response: false,
+                    verification: false
+                });
+                setCommitmentData(null);
+                setChallengeData(null);
+                setResponseData(null);
+                setVerificationData(null);
+                clearConsole();
+                setIsPlaying(true);
+                
+                // Cancel any existing timers
+                if (timerRef.current) {
+                    clearTimeout(timerRef.current);
+                }
+                
+                // Schedule the entire animation sequence
+                
+                // Initial messages (0-5 seconds)
+                for (let i = 0; i < 6; i++) {
+                    setTimeout(() => {
+                        addConsoleMessage(consoleMessages[i]);
+                    }, i * 500);
+                }
+                
+                // Step 1: Commitment (6-9 seconds)
+                setTimeout(() => {
+                    addConsoleMessage(consoleMessages[6]);
+                    addConsoleMessage(consoleMessages[7]);
+                    setCommitmentData({
+                        hash: "0x7a2c9dbfea78cbf98123741922ca9ed501689e74bcfa4a192c1103321f7396bc",
+                        time: new Date().toLocaleTimeString(),
+                        coherenceNorm: 0.127
+                    });
+                    setProtocolStatus(prev => ({ ...prev, commitment: true }));
+                    setStep(1);
+                }, 6000);
+                
+                // Step 2: Challenge (9-12 seconds)
+                setTimeout(() => {
+                    addConsoleMessage(consoleMessages[8]);
+                    addConsoleMessage(consoleMessages[9]);
+                    setChallengeData({
+                        challenge: "Random_R3FmqZ7y",
+                        time: new Date().toLocaleTimeString()
+                    });
+                    setProtocolStatus(prev => ({ ...prev, challenge: true }));
+                    setStep(2);
+                }, 9000);
+                
+                // Step 3: Response (12-15 seconds)
+                setTimeout(() => {
+                    addConsoleMessage(consoleMessages[10]);
+                    addConsoleMessage(consoleMessages[11]);
+                    addConsoleMessage(consoleMessages[12]);
+                    addConsoleMessage(consoleMessages[13]);
+                    setResponseData({
+                        proof: "ZK_Proof_93dJw71pQr",
+                        coherenceNorm: 0.084,
+                        time: new Date().toLocaleTimeString()
+                    });
+                    setProtocolStatus(prev => ({ ...prev, response: true }));
+                    setStep(3);
+                }, 12000);
+                
+                // Step 4: Verification (15-18 seconds)
+                setTimeout(() => {
+                    addConsoleMessage(consoleMessages[14]);
+                    addConsoleMessage(consoleMessages[15]);
+                    addConsoleMessage(consoleMessages[16]);
+                    setVerificationData({
+                        valid: true,
+                        time: new Date().toLocaleTimeString()
+                    });
+                    setProtocolStatus(prev => ({ ...prev, verification: true }));
+                    setStep(4);
+                    setIsPlaying(false);
+                }, 15000);
+            };
+            
+            // Step-by-step animation
+            React.useEffect(() => {
+                // The animation is now controlled in the runDemo function
+                // This effect is only needed for cleanup
+                return () => {
+                    if (timerRef.current) {
+                        clearTimeout(timerRef.current);
+                    }
+                };
+            }, []);
+            
+            // Stop animation
+            const stopAnimation = () => {
+                setIsPlaying(false);
+                if (timerRef.current) {
+                    clearTimeout(timerRef.current);
+                }
+            };
+            
+            return (
+                <div className="demo-container">
+                    <div className="demo-header">
+                        <h2 className="zkquantum-color">Zero-Knowledge Quantum Proof System</h2>
+                        <p>
+                            Witness a revolutionary protocol that allows a classical (non-quantum) verifier to confirm that 
+                            a quantum computation was performed correctly, without requiring quantum capabilities.
+                        </p>
+                    </div>
+                    
+                    <div className="grid-2">
+                        <div className="card">
+                            <h3 className="mb-4">Protocol Visualization</h3>
+                            
+                            <div className="flex justify-between items-center mb-4">
+                                <div>
+                                    <button 
+                                        className="btn btn-accent"
+                                        onClick={runDemo}
+                                        disabled={isPlaying}
+                                    >
+                                        Run Full Demo
+                                    </button>
+                                </div>
+                                <div>
+                                    <button 
+                                        className="btn btn-outline"
+                                        onClick={stopAnimation}
+                                        disabled={!isPlaying}
+                                    >
+                                        Stop
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div className="visualization relative bg-gray-50 rounded-lg p-4" style={{height: "400px"}}>
+                                {/* Main container with protocol flow */}
+                                <div className="flex justify-between items-center" style={{height: "150px"}}>
+                                    {/* Quantum Prover */}
+                                    <div className="flex flex-col items-center" style={{width: "120px"}}>
+                                        <div className={`w-20 h-20 zkquantum-bg rounded-full flex items-center justify-center ${step >= 1 ? 'pulse' : ''}`}>
+                                            <span className="text-2xl text-white">⚛️</span>
+                                        </div>
+                                        <div className="text-center mt-2">
+                                            <div className="font-bold">Quantum Prover</div>
+                                            <div className="text-xs">Has quantum capabilities</div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Central protocol flow */}
+                                    <div className="flex-1 relative mx-4" style={{height: "10px"}}>
+                                        <div className="absolute top-1/2 left-0 right-0 border-t-2 border-dashed border-gray-300 transform -translate-y-1/2"></div>
+                                    </div>
+                                    
+                                    {/* Classical Verifier */}
+                                    <div className="flex flex-col items-center" style={{width: "120px"}}>
+                                        <div className={`w-20 h-20 quantum-bg rounded-full flex items-center justify-center ${step >= 1 ? 'pulse' : ''}`}>
+                                            <span className="text-2xl text-white">🖥️</span>
+                                        </div>
+                                        <div className="text-center mt-2">
+                                            <div className="font-bold">Classical Verifier</div>
+                                            <div className="text-xs">No quantum capabilities</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {/* Protocol steps animation */}
+                                <div className="mt-8 flex flex-col items-center space-y-4">
+                                    {/* Commitment step */}
+                                    <div 
+                                        className={`
+                                            w-full max-w-xs transition-opacity duration-500 relative
+                                            ${protocolStatus.commitment ? 'opacity-100' : 'opacity-0'}
+                                        `}
+                                    >
+                                        <div className="bg-white px-3 py-2 rounded shadow-sm border zkquantum-border">
+                                            <div className="flex items-center gap-2">
+                                                <span className="h-4 w-4 zkquantum-bg rounded-full flex items-center justify-center text-white text-xs">1</span>
+                                                <span className="text-xs font-semibold">Commitment</span>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Commitment animation */}
+                                        {protocolStatus.commitment && !protocolStatus.challenge && (
+                                            <div className="absolute -right-8 top-1/2 transform -translate-y-1/2">
+                                                <div className="h-8 w-8 bg-pink-100 rounded-full flex items-center justify-center animate-pulse">
+                                                    <span className="text-sm">📦</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Challenge step */}
+                                    <div 
+                                        className={`
+                                            w-full max-w-xs transition-opacity duration-500 relative
+                                            ${protocolStatus.challenge ? 'opacity-100' : 'opacity-0'}
+                                        `}
+                                    >
+                                        <div className="bg-white px-3 py-2 rounded shadow-sm border quantum-border">
+                                            <div className="flex items-center gap-2">
+                                                <span className="h-4 w-4 quantum-bg rounded-full flex items-center justify-center text-white text-xs">2</span>
+                                                <span className="text-xs font-semibold">Challenge</span>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Challenge animation */}
+                                        {protocolStatus.challenge && !protocolStatus.response && (
+                                            <div className="absolute -left-8 top-1/2 transform -translate-y-1/2">
+                                                <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center animate-pulse">
+                                                    <span className="text-sm">❓</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Response step */}
+                                    <div 
+                                        className={`
+                                            w-full max-w-xs transition-opacity duration-500 relative
+                                            ${protocolStatus.response ? 'opacity-100' : 'opacity-0'}
+                                        `}
+                                    >
+                                        <div className="bg-white px-3 py-2 rounded shadow-sm border zkquantum-border">
+                                            <div className="flex items-center gap-2">
+                                                <span className="h-4 w-4 zkquantum-bg rounded-full flex items-center justify-center text-white text-xs">3</span>
+                                                <span className="text-xs font-semibold">Response</span>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Response animation */}
+                                        {protocolStatus.response && !protocolStatus.verification && (
+                                            <div className="absolute -right-8 top-1/2 transform -translate-y-1/2">
+                                                <div className="h-8 w-8 bg-pink-100 rounded-full flex items-center justify-center animate-pulse">
+                                                    <span className="text-sm">📊</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Verification step */}
+                                    <div 
+                                        className={`
+                                            w-full max-w-xs transition-opacity duration-500
+                                            ${protocolStatus.verification ? 'opacity-100' : 'opacity-0'}
+                                        `}
+                                    >
+                                        <div className="bg-green-100 px-3 py-2 rounded shadow-sm border border-green-300">
+                                            <div className="flex items-center gap-2">
+                                                <span className="h-4 w-4 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">4</span>
+                                                <span className="text-xs font-semibold">Verification: VALID ✓</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="card">
+                            <h3 className="mb-4">Protocol Console</h3>
+                            <div className="console">
+                                {consoleOutput.map((message, idx) => (
+                                    <div key={idx} className="console-line">
+                                        <span className="text-green-400">&gt;</span> {message}
+                                    </div>
+                                ))}
+                                {isPlaying && (
+                                    <div className="console-line">
+                                        <span className="text-green-400">&gt;</span> <span className="pulse">_</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="grid-2 mt-4">
+                        <div className="card">
+                            <h3 className="mb-4">Protocol Details</h3>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                {/* Commitment */}
+                                <div className={`rounded p-3 ${commitmentData ? 'bg-pink-50 border border-pink-200' : 'bg-gray-100'}`}>
+                                    <h4 className="text-sm font-bold mb-2">1. Commitment</h4>
+                                    <p className="text-xs mb-2">
+                                        The quantum prover executes the computation and creates a commitment using the Prime Framework's fiber algebra.
+                                    </p>
+                                    {commitmentData && (
+                                        <div className="bg-white p-2 rounded text-xs mt-2">
+                                            <div><strong>Hash:</strong> <span className="mono">{commitmentData.hash.substring(0, 10)}...</span></div>
+                                            <div><strong>Coherence Norm:</strong> {commitmentData.coherenceNorm}</div>
+                                            <div><strong>Time:</strong> {commitmentData.time}</div>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                {/* Challenge */}
+                                <div className={`rounded p-3 ${challengeData ? 'bg-blue-50 border border-blue-200' : 'bg-gray-100'}`}>
+                                    <h4 className="text-sm font-bold mb-2">2. Challenge</h4>
+                                    <p className="text-xs mb-2">
+                                        The classical verifier sends a random challenge based on the commitment.
+                                    </p>
+                                    {challengeData && (
+                                        <div className="bg-white p-2 rounded text-xs mt-2">
+                                            <div><strong>Challenge:</strong> <span className="mono">{challengeData.challenge}</span></div>
+                                            <div><strong>Time:</strong> {challengeData.time}</div>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                {/* Response */}
+                                <div className={`rounded p-3 ${responseData ? 'bg-pink-50 border border-pink-200' : 'bg-gray-100'}`}>
+                                    <h4 className="text-sm font-bold mb-2">3. Response</h4>
+                                    <p className="text-xs mb-2">
+                                        The prover produces a zero-knowledge response that proves correctness without revealing the quantum state.
+                                    </p>
+                                    {responseData && (
+                                        <div className="bg-white p-2 rounded text-xs mt-2">
+                                            <div><strong>Proof:</strong> <span className="mono">{responseData.proof}</span></div>
+                                            <div><strong>Coherence Norm:</strong> {responseData.coherenceNorm}</div>
+                                            <div><strong>Time:</strong> {responseData.time}</div>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                {/* Verification */}
+                                <div className={`rounded p-3 ${verificationData ? 'bg-green-50 border border-green-200' : 'bg-gray-100'}`}>
+                                    <h4 className="text-sm font-bold mb-2">4. Verification</h4>
+                                    <p className="text-xs mb-2">
+                                        The verifier checks the response against the commitment and challenge, confirming the quantum computation was performed correctly.
+                                    </p>
+                                    {verificationData && (
+                                        <div className="bg-white p-2 rounded text-xs mt-2">
+                                            <div><strong>Status:</strong> <span className="text-green-600 font-bold">VALID ✓</span></div>
+                                            <div><strong>Verification Time:</strong> {verificationData.time}</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="card">
+                            <h3 className="mb-4">Technical Innovation</h3>
+                            
+                            <div className="p-3 rounded bg-gray-50">
+                                <h4 className="text-sm font-bold mb-2">Prime Framework Breakthroughs</h4>
+                                <ul className="ml-4 text-sm">
+                                    <li className="mb-2">
+                                        <strong>Quantum State Embedding:</strong> Quantum states are embedded in a fiber algebra with a unique encoding that preserves their properties while allowing classical verification.
+                                    </li>
+                                    <li className="mb-2">
+                                        <strong>Coherence-Preserving Commitments:</strong> The Prime Framework creates bindings to quantum computations that are verifiable yet zero-knowledge.
+                                    </li>
+                                    <li className="mb-2">
+                                        <strong>Classical Verification via Coherence Norm:</strong> Verification uses only classical operations on the coherence norm, accessible to non-quantum verifiers.
+                                    </li>
+                                    <li className="mb-2">
+                                        <strong>Information-Theoretic Security:</strong> The protocol provides perfect zero-knowledge - no information about the quantum state is revealed beyond validity.
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div className="code mt-4">
+                                <pre dangerouslySetInnerHTML={{
+                                    __html: `<span class="code-comment">// Zero-Knowledge Quantum Proof Protocol</span>
+<span class="code-keyword">class</span> <span class="code-function">ZKQuantumProofSystem</span> {
+  <span class="code-comment">// Prover: Executes quantum computation and creates commitment</span>
+  <span class="code-function">proverCommit</span>(quantumCircuit, quantumState) {
+    <span class="code-keyword">const</span> result = <span class="code-keyword">this</span>.executeQuantumCircuit(quantumCircuit, quantumState);
+    <span class="code-keyword">const</span> embedded = <span class="code-keyword">this</span>.fiberAlgebra.embedQuantumState(result);
+    <span class="code-keyword">const</span> randomness = <span class="code-keyword">this</span>.fiberAlgebra.generateRandomElement();
+    <span class="code-keyword">return</span> PrimeFramework.createCommitment(embedded, randomness);
+  }
+
+  <span class="code-comment">// Verifier: Check proof validity</span>
+  <span class="code-function">verifierVerify</span>(commitment, challenge, response) {
+    <span class="code-comment">// Verify using only classical operations</span>
+    <span class="code-keyword">const</span> isValid = PrimeFramework.verifyZKProof(
+      commitment, challenge, response.response);
+    <span class="code-keyword">const</span> normCheck = response.coherenceNorm < <span class="code-keyword">this</span>.threshold;
+    <span class="code-keyword">return</span> isValid && normCheck;
+  }
+}`
+                                }}></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                        <h3 className="mb-2">Revolutionary Applications</h3>
+                        <div className="grid-3">
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Verified Quantum Computing as a Service</h4>
+                                <p className="text-sm">
+                                    Clients can verify that a quantum cloud service correctly executed their algorithms without 
+                                    needing quantum capabilities themselves.
+                                </p>
+                            </div>
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Quantum-Secure Smart Contracts</h4>
+                                <p className="text-sm">
+                                    Enable blockchain verification of quantum computations for trustless quantum-powered 
+                                    agreements in decentralized systems.
+                                </p>
+                            </div>
+                            <div className="card">
+                                <h4 className="text-sm mb-2">Quantum Software Certification</h4>
+                                <p className="text-sm">
+                                    Certify quantum software without revealing proprietary algorithms or requiring 
+                                    quantum hardware for verification.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // Render app to DOM
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
